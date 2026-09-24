@@ -1,20 +1,40 @@
+import { Text, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-export default function App() {
+import {
+  PreferencesProvider,
+  usePreferences,
+} from '@/app/Preferences';
+import { AppNavigator } from '@/app/navigation/AppNavigator';
+import { styles } from './App.styles';
+
+/** Espera a la lectura real de preferencias, sin un temporizador artificial. */
+function AppContent() {
+  const { ready } = usePreferences();
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <>
+      <StatusBar style="light" />
+
+      {ready ? (
+        <AppNavigator />
+      ) : (
+        <View style={styles.loading}>
+          <Text style={styles.brand}>Game Libary</Text>
+        </View>
+      )}
+    </>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+/** Instala los proveedores comunes antes de montar las pantallas. */
+export default function App() {
+  return (
+    <SafeAreaProvider>
+      <PreferencesProvider>
+        <AppContent />
+      </PreferencesProvider>
+    </SafeAreaProvider>
+  );
+}
