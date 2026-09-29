@@ -9,12 +9,12 @@ import { TabCanvas } from '@/components/TabCanvas/TabCanvas';
 import { Action } from '@/components/Action/Action';
 
 import { libraryDemoItems } from '@/features/library/data/library.demo';
-import { styles } from './ProfileScreen.styles';
+import { useThemedStyles } from '@/theme/useThemedStyles';
+import { createStyles } from './ProfileScreen.styles';
 
 /** Resume la colección y abre exclusivamente la configuración del usuario. */
-export function ProfileScreen({
-    navigation,
-}: TabScreenProps<'Profile'>) {
+export function ProfileScreen({ navigation }: Readonly<TabScreenProps<'Profile'>>) {
+    const styles = useThemedStyles(createStyles);
     const { accent } = usePreferences();
     const { bottomSpace } = useDockMetrics();
     const profile = useLocalProfile();
@@ -26,62 +26,31 @@ export function ProfileScreen({
         },
         {
             label: 'Jugando',
-            value: libraryDemoItems.filter(
-                game => game.status === 'Jugando',
-            ).length,
+            value: libraryDemoItems.filter((game) => game.status === 'Jugando').length,
         },
         {
             label: 'Completados',
-            value: libraryDemoItems.filter(
-                game => game.status === 'Completado',
-            ).length,
+            value: libraryDemoItems.filter((game) => game.status === 'Completado').length,
         },
     ];
 
     return (
         <TabCanvas tab="Profile">
-            <ScrollView
-                contentContainerStyle={[
-                    styles.content,
-                    { paddingBottom: bottomSpace },
-                ]}
-            >
-                <View
-                    style={[
-                        styles.avatar,
-                        { borderColor: accent },
-                    ]}
-                >
-                    <Ionicons
-                        name="person-outline"
-                        size={38}
-                        color={accent}
-                    />
+            <ScrollView contentContainerStyle={[styles.content, { paddingBottom: bottomSpace }]}>
+                <View style={[styles.avatar, { borderColor: accent }]}>
+                    <Ionicons name="person-outline" size={38} color={accent} />
                 </View>
 
-                <Text style={styles.title}>
-                    {profile.value.username}
-                </Text>
+                <Text style={styles.title}>{profile.value.username}</Text>
 
-                <Text style={styles.subtitle}>
-                    Perfil local · Colección de muestra
-                </Text>
+                <Text style={styles.subtitle}>Perfil local · Colección de muestra</Text>
 
                 <View style={styles.stats}>
-                    {stats.map(stat => (
+                    {stats.map((stat) => (
                         <View key={stat.label} style={styles.stat}>
-                            <Text
-                                style={[
-                                    styles.number,
-                                    { color: accent },
-                                ]}
-                            >
-                                {stat.value}
-                            </Text>
+                            <Text style={[styles.number, { color: accent }]}>{stat.value}</Text>
 
-                            <Text style={styles.label}>
-                                {stat.label}
-                            </Text>
+                            <Text style={styles.label}>{stat.label}</Text>
                         </View>
                     ))}
                 </View>
@@ -89,16 +58,11 @@ export function ProfileScreen({
                 <Action
                     label="Ajustes del usuario"
                     icon="person-circle-outline"
-                    onPress={() =>
-                        navigation.navigate('UserSettings')
-                    }
+                    onPress={() => navigation.navigate('UserSettings')}
                 />
 
                 {profile.error && (
-                    <Text
-                        accessibilityRole="alert"
-                        style={styles.note}
-                    >
+                    <Text accessibilityRole="alert" style={styles.note}>
                         {profile.error}
                     </Text>
                 )}

@@ -6,8 +6,8 @@ export const shelfMaterials = {
         front: '#27282D',
         edge: '#08090B',
         rail: '#34353B',
+        wood: false,
     },
-
     graphite: {
         label: 'Grafito',
         back: '#242B30',
@@ -15,8 +15,8 @@ export const shelfMaterials = {
         front: '#46565F',
         edge: '#192126',
         rail: '#5B6A73',
+        wood: false,
     },
-
     steel: {
         label: 'Acero',
         back: '#3A4148',
@@ -24,5 +24,24 @@ export const shelfMaterials = {
         front: '#8796A5',
         edge: '#3A4654',
         rail: '#A0AFBC',
+        wood: false,
+    },
+    walnut: {
+        label: 'Nogal',
+        back: '#3B261D',
+        top: '#A27950',
+        front: '#785036',
+        edge: '#2C1A13',
+        rail: '#8F603F',
+        wood: true,
+    },
+    oak: {
+        label: 'Roble',
+        back: '#8E6E44',
+        top: '#E7C595',
+        front: '#C69A63',
+        edge: '#715134',
+        rail: '#BE965F',
+        wood: true,
     },
 } as const;

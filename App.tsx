@@ -2,15 +2,9 @@ import { Text, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import {
-  PreferencesProvider,
-  usePreferences,
-} from '@/app/Preferences';
+import { PreferencesProvider, usePreferences } from '@/app/Preferences';
 
-import {
-  LocalProfileProvider,
-  useLocalProfile,
-} from '@/features/profile/LocalProfile';
+import { LocalProfileProvider, useLocalProfile } from '@/features/profile/LocalProfile';
 
 import { AppNavigator } from '@/app/navigation/AppNavigator';
 import { styles } from './App.styles';
@@ -22,13 +16,13 @@ function AppContent() {
 
   return (
     <>
-      <StatusBar style="light" />
+      <StatusBar style={appearance.colors.dark ? 'light' : 'dark'} />
 
       {appearance.ready && profile.ready ? (
         <AppNavigator />
       ) : (
-        <View style={styles.loading}>
-          <Text style={styles.brand}>Game Libary</Text>
+        <View style={[styles.loading, { backgroundColor: appearance.colors.background }]}>
+          <Text style={[styles.brand, { color: appearance.accent }]}>Game Libary</Text>
         </View>
       )}
     </>

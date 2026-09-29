@@ -1,10 +1,6 @@
 import { Platform } from 'react-native';
 
-export type DiscoveryKind =
-    | 'trending'
-    | 'recent'
-    | 'upcoming';
-
+export type DiscoveryKind = 'trending' | 'recent' | 'upcoming';
 export interface DiscoveryGame {
     id: number;
     name: string;
@@ -13,66 +9,71 @@ export interface DiscoveryGame {
     releaseYear: number | null;
     url: string | null;
 }
-
 export interface DiscoveryResponse {
     source: 'IGDB';
     updatedAt: string;
     results: DiscoveryGame[];
 }
 
-// Esta URL es pública. Las claves de IGDB permanecen exclusivamente en NestJS.
+// URL pública: las credenciales de IGDB se mantienen exclusivamente en NestJS.
 const apiUrl = (
-    process.env.EXPO_PUBLIC_API_URL ??
-    (Platform.OS === 'android'
-        ? 'http://10.0.2.2:3000'
-        : 'http://localhost:3000')
-).replace(/\/$/, '');
+    process.env.EXPO_PUBLIC_API_URL?.trim() ||
+    (Platform.OS === 'android' ? 'http://10.0.2.2:3000' : 'http://localhost:3000')
+).replace(/\/+$/, '');
 
-/** Valida la respuesta antes de permitir que una pantalla la utilice. */
+/** Comprueba cada registro recibido antes de permitir que la pantalla lo utilice. */
+function isGame(value: unknown): value is DiscoveryGame {
+    if (!value || typeof value !== 'object') return false;
+    const game = value as Record<string, unknown>;
+    return (
+        Number.isSafeInteger(game.id) &&
+        Number(game.id) > 0 &&
+        typeof game.name === 'string' &&
+        (game.coverUrl === null || typeof game.coverUrl === 'string') &&
+        Array.isArray(game.platforms) &&
+        game.platforms.every((platform) => typeof platform === 'string') &&
+        (game.releaseYear === null || Number.isInteger(game.releaseYear)) &&
+        (game.url === null || typeof game.url === 'string')
+    );
+}
+
+/** Distingue fallos de conexión, errores HTTP y respuestas con formato incorrecto. */
 export async function getDiscovery(
     kind: DiscoveryKind,
     signal: AbortSignal,
 ): Promise<DiscoveryResponse> {
-    const response = await fetch(
-        `${apiUrl}/games/discover?section=${kind}`,
-        { signal },
-    );
-
+    let response: Response;
+    try {
+        response = await fetch(apiUrl + '/games/discover?section=' + kind, { signal });
+    } catch (cause) {
+        if (signal.aborted) throw cause;
+        throw new Error(
+            'No se pudo conectar con el servidor. Comprueba que la API esté en marcha y vuelve a intentarlo.',
+        );
+    }
     if (!response.ok) {
         throw new Error(
-            'No se pudo obtener el catálogo. Comprueba que la API esté arrancada y actualizada.',
+            response.status === 404
+                ? 'El servidor todavía no dispone de la ruta de Explorar.'
+                : 'El servidor no pudo obtener el catálogo. Inténtalo de nuevo en unos instantes.',
         );
     }
-
-    const data =
-        (await response.json()) as DiscoveryResponse;
-
+    let data: unknown;
+    try {
+        data = await response.json();
+    } catch {
+        throw new Error('El servidor devolvió una respuesta que no se puede leer.');
+    }
+    if (!data || typeof data !== 'object') throw new Error('Formato de catálogo inesperado.');
+    const result = data as Record<string, unknown>;
     if (
-        !data ||
-        data.source !== 'IGDB' ||
-        typeof data.updatedAt !== 'string' ||
-        !Array.isArray(data.results) ||
-        data.results.some(
-            game =>
-                !game ||
-                !Number.isSafeInteger(game.id) ||
-                typeof game.name !== 'string' ||
-                (game.coverUrl !== null &&
-                    typeof game.coverUrl !== 'string') ||
-                !Array.isArray(game.platforms) ||
-                game.platforms.some(
-                    platform => typeof platform !== 'string',
-                ) ||
-                (game.releaseYear !== null &&
-                    !Number.isInteger(game.releaseYear)) ||
-                (game.url !== null &&
-                    typeof game.url !== 'string'),
-        )
+        result.source !== 'IGDB' ||
+        typeof result.updatedAt !== 'string' ||
+        !Number.isFinite(Date.parse(result.updatedAt)) ||
+        !Array.isArray(result.results) ||
+        !result.results.every(isGame)
     ) {
-        throw new Error(
-            'La API devolvió un catálogo con formato inesperado.',
-        );
+        throw new Error('Formato de catálogo inesperado.');
     }
-
-    return data;
+    return result as unknown as DiscoveryResponse;
 }

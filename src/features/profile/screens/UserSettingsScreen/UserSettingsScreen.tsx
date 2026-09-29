@@ -11,25 +11,20 @@ import {
     SettingsSection,
     SettingsNote,
 } from '@/components/SettingsPanel/SettingsPanel';
-import { styles } from './UserSettingsScreen.styles';
+import { useThemedStyles } from '@/theme/useThemedStyles';
+import { createStyles } from './UserSettingsScreen.styles';
 
 /** Edita el nombre local sin simular cambios en una cuenta del servidor. */
 export function UserSettingsScreen({
     navigation,
-}: NativeStackScreenProps<
-    RootStackParams,
-    'UserSettings'
->) {
+}: Readonly<NativeStackScreenProps<RootStackParams, 'UserSettings'>>) {
+    const styles = useThemedStyles(createStyles);
     const profile = useLocalProfile();
     const { accent } = usePreferences();
 
-    const [name, setName] = useState(
-        profile.value.username,
-    );
+    const [name, setName] = useState(profile.value.username);
 
-    const valid =
-        name.trim().length >= 3 &&
-        name.trim().length <= 30;
+    const valid = name.trim().length >= 3 && name.trim().length <= 30;
 
     /** Aplica el nombre; el proveedor informa de posibles errores de guardado. */
     function save() {
@@ -40,10 +35,7 @@ export function UserSettingsScreen({
     }
 
     return (
-        <SafeAreaView
-            style={styles.root}
-            edges={['top', 'left', 'right']}
-        >
+        <SafeAreaView style={styles.root} edges={['top', 'left', 'right']}>
             <SettingsPanel
                 title="Ajustes del usuario"
                 closeLabel="Volver"
@@ -58,36 +50,23 @@ export function UserSettingsScreen({
                         autoCorrect={false}
                         autoCapitalize="none"
                         selectionColor={accent}
-                        style={[
-                            styles.input,
-                            { borderColor: accent },
-                        ]}
+                        style={[styles.input, { borderColor: accent }]}
                     />
 
                     <SettingsNote>
-                        Entre 3 y 30 caracteres. En este prototipo
-                        se guarda solo en este dispositivo.
+                        Entre 3 y 30 caracteres. En este prototipo se guarda solo en este dispositivo.
                     </SettingsNote>
 
-                    {valid && (
-                        <Action
-                            label="Aplicar nombre"
-                            icon="checkmark"
-                            onPress={save}
-                        />
-                    )}
+                    {valid && <Action label="Aplicar nombre" icon="checkmark" onPress={save} />}
                 </SettingsSection>
 
                 <SettingsSection title="Cuenta">
                     <SettingsNote>
-                        Email y contraseña se añadirán al conectar
-                        la sesión de usuario con la API.
+                        Email y contraseña se añadirán al conectar la sesión de usuario con la API.
                     </SettingsNote>
                 </SettingsSection>
 
-                {profile.error && (
-                    <SettingsNote>{profile.error}</SettingsNote>
-                )}
+                {profile.error && <SettingsNote>{profile.error}</SettingsNote>}
             </SettingsPanel>
         </SafeAreaView>
     );

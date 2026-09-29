@@ -1,11 +1,5 @@
 import type { PropsWithChildren } from 'react';
-import {
-    ScrollView,
-    Pressable,
-    Switch,
-    Text,
-    View,
-} from 'react-native';
+import { ScrollView, Pressable, Switch, Text, View } from 'react-native';
 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -13,7 +7,8 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { usePreferences } from '@/app/Preferences';
 import { Action } from '@/components/Action/Action';
 import { alpha } from '@/theme/theme';
-import { styles } from './SettingsPanel.styles';
+import { useThemedStyles } from '@/theme/useThemedStyles';
+import { createStyles } from './SettingsPanel.styles';
 
 /** Comparte presentación y errores; cada pantalla decide qué ajustes contiene. */
 export function SettingsPanel({
@@ -28,6 +23,7 @@ export function SettingsPanel({
     closeLabel?: string;
     bottomSpace?: number;
 }>) {
+    const styles = useThemedStyles(createStyles);
     const insets = useSafeAreaInsets();
     const { storageError } = usePreferences();
 
@@ -37,19 +33,14 @@ export function SettingsPanel({
             contentContainerStyle={[
                 styles.content,
                 {
-                    paddingBottom:
-                        bottomSpace ?? insets.bottom + 24,
+                    paddingBottom: bottomSpace ?? insets.bottom + 24,
                 },
             ]}
         >
             {onBack && (
                 <Action
                     label={closeLabel}
-                    icon={
-                        closeLabel === 'Listo'
-                            ? 'checkmark'
-                            : 'arrow-back'
-                    }
+                    icon={closeLabel === 'Listo' ? 'checkmark' : 'arrow-back'}
                     onPress={onBack}
                 />
             )}
@@ -59,10 +50,7 @@ export function SettingsPanel({
             {children}
 
             {storageError && (
-                <Text
-                    accessibilityRole="alert"
-                    style={styles.note}
-                >
+                <Text accessibilityRole="alert" style={styles.note}>
                     {storageError}
                 </Text>
             )}
@@ -71,10 +59,8 @@ export function SettingsPanel({
 }
 
 /** Agrupa controles relacionados bajo un título. */
-export function SettingsSection({
-    title,
-    children,
-}: PropsWithChildren<{ title: string }>) {
+export function SettingsSection({ title, children }: PropsWithChildren<{ title: string }>) {
+    const styles = useThemedStyles(createStyles);
     return (
         <View style={styles.section}>
             <Text style={styles.heading}>{title}</Text>
@@ -85,6 +71,7 @@ export function SettingsSection({
 
 /** Permite que las opciones se ajusten al espacio y al tamaño del texto. */
 export function Choices({ children }: PropsWithChildren) {
+    const styles = useThemedStyles(createStyles);
     return <View style={styles.choices}>{children}</View>;
 }
 
@@ -100,7 +87,8 @@ export function Choice({
     onPress: () => void;
     color?: string;
 }) {
-    const { accent } = usePreferences();
+    const styles = useThemedStyles(createStyles);
+    const { accent, colors } = usePreferences();
 
     return (
         <Pressable
@@ -110,32 +98,19 @@ export function Choice({
             style={[
                 styles.choice,
                 {
-                    borderColor: selected ? accent : '#414146',
-                    backgroundColor: selected
-                        ? alpha(accent, 0.12)
-                        : '#171719',
+                    borderColor: selected ? accent : colors.border,
+                    backgroundColor: selected ? alpha(accent, 0.12) : colors.surface,
                 },
             ]}
         >
-            {color && (
-                <View
-                    style={[
-                        styles.swatch,
-                        { backgroundColor: color },
-                    ]}
-                />
-            )}
+            {color && <View style={[styles.swatch, { backgroundColor: color }]} />}
 
             <Text style={styles.label}>{label}</Text>
 
             <Ionicons
-                name={
-                    selected
-                        ? 'checkmark-circle'
-                        : 'ellipse-outline'
-                }
+                name={selected ? 'checkmark-circle' : 'ellipse-outline'}
                 size={20}
-                color={selected ? accent : '#85858E'}
+                color={selected ? accent : colors.muted}
             />
         </Pressable>
     );
@@ -151,31 +126,29 @@ export function Toggle({
     value: boolean;
     onChange: (value: boolean) => void;
 }) {
-    const { accent } = usePreferences();
+    const styles = useThemedStyles(createStyles);
+    const { accent, colors } = usePreferences();
 
     return (
         <View style={styles.toggle}>
-            <Text style={[styles.label, styles.flex]}>
-                {label}
-            </Text>
+            <Text style={[styles.label, styles.flex]}>{label}</Text>
 
             <Switch
                 accessibilityLabel={label}
                 value={value}
                 onValueChange={onChange}
                 trackColor={{
-                    false: '#424248',
+                    false: colors.border,
                     true: alpha(accent, 0.6),
                 }}
-                thumbColor={value ? accent : '#DBDBE0'}
+                thumbColor={value ? accent : colors.muted}
             />
         </View>
     );
 }
 
 /** Muestra una aclaración breve sin simular un control interactivo. */
-export function SettingsNote({
-    children,
-}: PropsWithChildren) {
+export function SettingsNote({ children }: PropsWithChildren) {
+    const styles = useThemedStyles(createStyles);
     return <Text style={styles.note}>{children}</Text>;
 }
