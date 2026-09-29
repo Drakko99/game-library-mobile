@@ -1,66 +1,35 @@
 import { StyleSheet } from 'react-native';
-
 import { theme } from '@/theme/theme';
 
 export const styles = StyleSheet.create({
     container: { flex: 1 },
 
-    section: {
-        marginBottom: 22,
-        overflow: 'visible',
-    },
-
-    ambient: {
-        ...StyleSheet.absoluteFill,
-        borderRadius: 14,
-    },
-
-    fill: {
-        ...StyleSheet.absoluteFill,
-    },
-
     row: {
         flexDirection: 'row',
         gap: 12,
-        alignItems: 'stretch',
+        marginBottom: 14,
     },
 
-    shelfRow: {
-        paddingHorizontal: 12,
-        paddingTop: 24,
-        paddingBottom: 2,
-        alignItems: 'flex-end',
-    },
+    cell: { flex: 1, minWidth: 0 },
+    cover: { width: '100%' },
+    listCover: { width: 68 },
 
-    cell: {
-        flex: 1,
-        minWidth: 0,
-    },
-
-    cover: {
-        width: '100%',
-    },
-
-    gridCard: {
+    grid: {
+        backgroundColor: theme.surface,
         padding: 8,
         borderRadius: 16,
-        backgroundColor: theme.surface,
         borderWidth: 1,
         borderColor: theme.border,
     },
 
-    listCard: {
+    list: {
         flexDirection: 'row',
-        gap: 16,
+        gap: 12,
         padding: 12,
-        backgroundColor: theme.surface,
         borderRadius: 18,
+        backgroundColor: theme.surface,
         borderWidth: 1,
         borderColor: theme.border,
-    },
-
-    listCover: {
-        width: 76,
     },
 
     metadata: {
@@ -72,11 +41,11 @@ export const styles = StyleSheet.create({
 
     title: {
         color: theme.text,
-        fontSize: 16,
+        fontSize: 15,
         fontWeight: '700',
     },
 
-    platform: {
+    caption: {
         color: theme.muted,
         fontSize: 12,
     },
@@ -86,26 +55,9 @@ export const styles = StyleSheet.create({
         fontWeight: '600',
     },
 
-    open: {
-        color: theme.muted,
-        fontSize: 12,
-        marginTop: 8,
-    },
-
-    beam: {
-        height: 22,
-        borderBottomLeftRadius: 10,
-        borderBottomRightRadius: 10,
-    },
-
-    led: {
-        height: 2,
-        zIndex: 1,
-    },
-
     empty: {
         color: theme.muted,
-        textAlign: 'center',
         padding: 24,
+        textAlign: 'center',
     },
 });

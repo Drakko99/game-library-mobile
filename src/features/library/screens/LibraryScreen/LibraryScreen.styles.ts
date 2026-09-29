@@ -1,69 +1,70 @@
 import { StyleSheet } from 'react-native';
-
 import { theme } from '@/theme/theme';
 
 export const styles = StyleSheet.create({
-    root: {
-        flex: 1,
-        backgroundColor: theme.background,
-    },
-
     content: {
         flex: 1,
-        width: '100%',
+        paddingHorizontal: 16,
+        paddingTop: 14,
+        gap: 12,
         maxWidth: 900,
+        width: '100%',
         alignSelf: 'center',
-        paddingHorizontal: 20,
-    },
-
-    header: {
-        paddingTop: 18,
-        paddingBottom: 18,
-        gap: 8,
     },
 
     brand: {
-        fontSize: 11,
+        fontSize: 10,
         fontWeight: '800',
-        letterSpacing: 3,
+        letterSpacing: 2,
     },
+
+    heading: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+    },
+
+    flex: { flex: 1 },
 
     title: {
         color: theme.text,
-        fontSize: 34,
+        fontSize: 32,
         fontWeight: '800',
         letterSpacing: -1,
     },
 
-    subtitle: {
+    caption: {
         color: theme.muted,
         fontSize: 12,
-    },
-
-    toolbar: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: 12,
-        marginBottom: 14,
-    },
-
-    counter: {
-        color: theme.text,
-        fontSize: 15,
-        fontWeight: '600',
+        marginTop: 4,
     },
 
     search: {
-        color: theme.text,
+        minHeight: 48,
+        paddingHorizontal: 16,
+        paddingVertical: 10,
         backgroundColor: theme.surface,
         borderWidth: 1,
         borderColor: theme.border,
-        borderRadius: 16,
-        minHeight: 48,
-        paddingHorizontal: 16,
-        paddingVertical: 12,
+        borderRadius: 18,
+        color: theme.text,
         fontSize: 14,
+    },
+
+    filters: { gap: 8 },
+
+    chip: {
+        minHeight: 48,
+        paddingHorizontal: 14,
+        justifyContent: 'center',
+        borderRadius: 24,
+        borderWidth: 1,
+        borderColor: theme.border,
+        backgroundColor: theme.surface,
+    },
+
+    chipText: {
+        fontSize: 13,
+        fontWeight: '600',
     },
 });

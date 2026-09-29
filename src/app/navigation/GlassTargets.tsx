@@ -5,29 +5,33 @@ import {
     type PropsWithChildren,
     type RefObject,
 } from 'react';
-import type { View } from 'react-native';
 
+import type { View } from 'react-native';
 import type { TabParams } from './navigation.types';
 
 const Context = createContext<
     Record<keyof TabParams, RefObject<View | null>> | null
 >(null);
 
-/** Conserva un fondo por pestaña para el desenfoque de Android. */
+/** Asigna un fondo independiente a cada pestaña. */
 export function GlassTargetsProvider({
     children,
 }: PropsWithChildren) {
     const Library = useRef<View | null>(null);
+    const Explore = useRef<View | null>(null);
     const Profile = useRef<View | null>(null);
+    const AppSettings = useRef<View | null>(null);
 
     return (
-        <Context.Provider value={{ Library, Profile }}>
+        <Context.Provider
+            value={{ Library, Explore, Profile, AppSettings }}
+        >
             {children}
         </Context.Provider>
     );
 }
 
-/** Recupera los fondos que hay detrás de la barra inferior. */
+/** Obtiene las referencias que necesita el desenfoque de Android. */
 export function useGlassTargets() {
     const value = useContext(Context);
 
